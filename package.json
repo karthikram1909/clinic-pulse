@@ -1,4 +1,12 @@
 {
+  "name": "clinic-pulse",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cd project && npm run dev",
+    "build": "cd project && npm run build",
+    "install-all": "npm install && cd project && npm install && cd ../backend && npm install"
+  },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "cors": "^2.8.5",
@@ -6,5 +14,8 @@
     "express": "^5.2.1",
     "pg": "^8.16.3",
     "serverless-http": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
