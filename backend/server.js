@@ -10,7 +10,7 @@ const app = express();
 // Configure CORS: in production allow only configured FRONTEND_ORIGIN,
 // in development reflect the request origin so local dev (localhost:8888) works
 const corsOptions = process.env.NODE_ENV === 'production' ? {
-  origin: process.env.FRONTEND_ORIGIN || 'tokenpulse.netlify.app',
+  origin: process.env.FRONTEND_ORIGIN || 'https://tokenpulse.netlify.app',
   credentials: true
 } : {
   origin: true, // reflect request origin — safe for local development
@@ -36,3 +36,4 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log("Server running on port " + PORT);
 });
+
