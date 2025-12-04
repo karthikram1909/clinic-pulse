@@ -8,21 +8,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Import your routes
+// Import patient routes
 const patientRoutes = require('../../backend/routes/patientRoutes.js');
 
-// Mount routes at /api
+// Mount routes
 app.use('/api', patientRoutes);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Backend is running' });
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
 });
 
-// Error handling middleware
+// Error handler
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(500).json({ error: err.message || 'Internal server error' });
+  res.status(500).json({ error: err.message });
 });
 
 exports.handler = serverless(app);
