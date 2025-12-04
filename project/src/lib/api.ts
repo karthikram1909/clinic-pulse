@@ -16,8 +16,8 @@ function apiUrl(path: string) {
 export async function getPatients(status?: string): Promise<Patient[]> {
   try {
     const url = status 
-      ? apiUrl(`/api/queue?status=${encodeURIComponent(status)}`)
-      : apiUrl('/api/queue');
+      ? apiUrl(`/queue?status=${encodeURIComponent(status)}`)
+      : apiUrl('/queue');
     
     const response = await fetch(url, { credentials: 'include' });
     
@@ -48,7 +48,7 @@ export async function createPatient(patient: {
   purpose?: string;
   note?: string;
 }): Promise<Patient> {
-  const response = await fetch(apiUrl('/api/patients'), {
+  const response = await fetch(apiUrl('/patients'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -70,7 +70,7 @@ export async function createPatient(patient: {
 }
 
 export async function startConsultation(patientId: number): Promise<Patient> {
-  const response = await fetch(apiUrl(`/api/patients/${patientId}/start`), {
+  const response = await fetch(apiUrl(`/patients/${patientId}/start`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include'
@@ -86,7 +86,7 @@ export async function startConsultation(patientId: number): Promise<Patient> {
 }
 
 export async function markPatientDone(patientId: number): Promise<Patient> {
-  const response = await fetch(apiUrl(`/api/patients/${patientId}/complete`), {
+  const response = await fetch(apiUrl(`/patients/${patientId}/complete`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include'
@@ -102,7 +102,7 @@ export async function markPatientDone(patientId: number): Promise<Patient> {
 }
 
 export async function cancelPatient(patientId: number): Promise<Patient> {
-  const response = await fetch(apiUrl(`/api/patients/${patientId}/cancel`), {
+  const response = await fetch(apiUrl(`/patients/${patientId}/cancel`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include'
@@ -118,7 +118,7 @@ export async function cancelPatient(patientId: number): Promise<Patient> {
 }
 
 export async function getDashboardStats() {
-  const response = await fetch(apiUrl('/api/dashboard'), { credentials: 'include' });
+  const response = await fetch(apiUrl('/dashboard'), { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch clinic stats (${response.status})`);
