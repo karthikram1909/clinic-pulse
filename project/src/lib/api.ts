@@ -1,17 +1,25 @@
 import type { Patient } from './types';
 
-const API_BASE = 'https://pulseclinic.netlify.app/';
+// Use environment variable at build time (CRA convention).
+// Make this include the `/api` prefix on the backend (recommended).
+const API_BASE = (process.env.REACT_APP_API_BASE || 'http://localhost:4000') // fallback for dev
+  .replace(/\/+$/, ''); // remove trailing slash
+
+function apiUrl(path: string) {
+  // ensure exactly one slash between base and path
+  return `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
+}
 
 export async function getPatients(status?: string): Promise<Patient[]> {
   try {
     const url = status 
-      ? `${API_BASE}/queue?status=${encodeURIComponent(status)}`
-      : `${API_BASE}/queue`;
+      ? apiUrl(`/api/queue?status=${encodeURIComponent(status)}`)
+      : apiUrl('/api/queue');
     
-    const response = await fetch(url);
+    const response = await fetch(url, { credentials: 'include' });
     
     if (!response.ok) {
-      throw new Error('Failed to fetch patients');
+      throw new Error(`Failed to fetch patients: ${response.status}`);
     }
     
     const data = await response.json();
@@ -37,103 +45,86 @@ export async function createPatient(patient: {
   purpose?: string;
   note?: string;
 }): Promise<Patient> {
-  const response = await fetch(`${API_BASE}/patients`, {
+  const response = await fetch(apiUrl('/api/patients'), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name: patient.name,
-      age: patient.age || null,
-      purpose: patient.purpose || null,
-      notes: patient.note || null,
+      age: patient.age ?? null,
+      purpose: patient.purpose ?? null,
+      notes: patient.note ?? null,
     }),
+    credentials: 'include'
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to create patient');
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to create patient (${response.status})`);
   }
 
   const data = await response.json();
-  return {
-    id: data.id,
-    token_no: data.token_number,
-    name: data.name,
-    age: data.age,
-    purpose: data.purpose,
-    note: data.notes,
-    status: normalizeStatus(data.current_status),
-    created_at: data.created_at,
-  };
+  return mapPatient(data);
 }
 
 export async function startConsultation(patientId: number): Promise<Patient> {
-  const response = await fetch(`${API_BASE}/patients/${patientId}/start`, {
+  const response = await fetch(apiUrl(`/api/patients/${patientId}/start`), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include'
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to start consultation');
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to start consultation (${response.status})`);
   }
 
   const data = await response.json();
-  return {
-    id: data.id,
-    token_no: data.token_number,
-    name: data.name,
-    age: data.age,
-    purpose: data.purpose,
-    note: data.notes,
-    status: normalizeStatus(data.current_status),
-    created_at: data.created_at,
-  };
+  return mapPatient(data);
 }
 
 export async function markPatientDone(patientId: number): Promise<Patient> {
-  const response = await fetch(`${API_BASE}/patients/${patientId}/complete`, {
+  const response = await fetch(apiUrl(`/api/patients/${patientId}/complete`), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include'
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to mark patient as done');
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to mark patient as done (${response.status})`);
   }
 
   const data = await response.json();
-  return {
-    id: data.id,
-    token_no: data.token_number,
-    name: data.name,
-    age: data.age,
-    purpose: data.purpose,
-    note: data.notes,
-    status: normalizeStatus(data.current_status),
-    created_at: data.created_at,
-  };
+  return mapPatient(data);
 }
 
 export async function cancelPatient(patientId: number): Promise<Patient> {
-  const response = await fetch(`${API_BASE}/patients/${patientId}/cancel`, {
+  const response = await fetch(apiUrl(`/api/patients/${patientId}/cancel`), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include'
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to cancel patient');
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to cancel patient (${response.status})`);
   }
 
   const data = await response.json();
+  return mapPatient(data);
+}
+
+export async function getDashboardStats() {
+  const response = await fetch(apiUrl('/api/dashboard'), { credentials: 'include' });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch clinic stats (${response.status})`);
+  }
+
+  return response.json();
+}
+
+function mapPatient(data: any): Patient {
   return {
     id: data.id,
     token_no: data.token_number,
@@ -144,16 +135,6 @@ export async function cancelPatient(patientId: number): Promise<Patient> {
     status: normalizeStatus(data.current_status),
     created_at: data.created_at,
   };
-}
-
-export async function getDashboardStats() {
-  const response = await fetch(`${API_BASE}/dashboard`);
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch clinic stats');
-  }
-
-  return response.json();
 }
 
 // Helper function to normalize status names from backend to frontend format
