@@ -1,7 +1,7 @@
 [build]
-  base = "frontend"           # change if your frontend folder name differs
+  base = "project"           # change if your frontend folder name differs
   command = "npm run build"
-  publish = "frontend/dist"   # Vite outputs to frontend/dist; if your build outputs elsewhere adjust this
+  publish = "project/dist"   # Vite outputs to frontend/dist; if your build outputs elsewhere adjust this
 
 [build.environment]
   # We'll set VITE_API_BASE in Netlify UI instead of hardcoding it here.
