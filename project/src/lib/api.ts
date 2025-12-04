@@ -1,9 +1,11 @@
 import type { Patient } from './types';
 
-// Use environment variable at build time (CRA convention).
-// Make this include the `/api` prefix on the backend (recommended).
-// const API_BASE = (process.env.REACT_APP_API_BASE || 'http://localhost:4000') // fallback for dev
-const API_BASE = 'https://clinic-pvfq.onrender.com'
+// Use environment variable for API base
+// In production (Netlify), this will be /.netlify/functions/api
+// In development, it will default to http://localhost:4000
+const API_BASE = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
+  ? '/.netlify/functions/api' // Production: use serverless functions
+  : (process.env.REACT_APP_API_BASE || 'http://localhost:4000') // Development: use local backend
   .replace(/\/+$/, ''); // remove trailing slash
 
 function apiUrl(path: string) {
