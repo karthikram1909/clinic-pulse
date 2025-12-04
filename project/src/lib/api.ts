@@ -1,6 +1,6 @@
 import type { Patient } from './types';
 
-const API_BASE = 'http://localhost:4000/api';
+const API_BASE = 'https://pulseclinic.netlify.app/';
 
 export async function getPatients(status?: string): Promise<Patient[]> {
   try {
