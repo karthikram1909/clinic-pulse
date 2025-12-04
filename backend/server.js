@@ -7,11 +7,17 @@ const patientRoutes = require("./routes/patientRoutes");
 
 const app = express();
 
-// IMPORTANT: Allow Netlify frontend only
-app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN || "https://clinicpulseee.netlify.app/",
+// Configure CORS: in production allow only configured FRONTEND_ORIGIN,
+// in development reflect the request origin so local dev (localhost:8888) works
+const corsOptions = process.env.NODE_ENV === 'production' ? {
+  origin: process.env.FRONTEND_ORIGIN || 'https://clinicpulseee.netlify.app',
   credentials: true
-}));
+} : {
+  origin: true, // reflect request origin — safe for local development
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
