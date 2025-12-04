@@ -1,10 +1,12 @@
 [build]
-  command = "npm ci && cd project && npm ci && npm run build"
+  # Ensure devDependencies (vite) are installed during CI by disabling npm's production mode
+  command = "NPM_CONFIG_PRODUCTION=false npm ci && cd project && NPM_CONFIG_PRODUCTION=false npm ci && npm run build"
   functions = "netlify/functions"
   publish = "project/dist"
 
 [context.production]
-  command = "npm ci && cd project && npm ci && npm run build"
+  # Same as above for production context
+  command = "NPM_CONFIG_PRODUCTION=false npm ci && cd project && NPM_CONFIG_PRODUCTION=false npm ci && npm run build"
 
 [context.develop]
   command = "cd project && npm run dev"
