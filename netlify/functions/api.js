@@ -11,8 +11,8 @@ app.use(express.json());
 // Import patient routes
 const patientRoutes = require('../../backend/routes/patientRoutes.js');
 
-// Mount routes
-app.use('/api', patientRoutes);
+// Mount routes at root so function URLs map to: /.netlify/functions/api/queue etc.
+app.use('/', patientRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
