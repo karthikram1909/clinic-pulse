@@ -1,10 +1,10 @@
 [build]
-  command = "cd project && npm ci && npx vite build"
+  command = "npm ci && cd project && npm ci && npm run build"
   functions = "netlify/functions"
   publish = "project/dist"
 
 [context.production]
-  command = "cd project && npm ci && npx vite build"
+  command = "npm ci && cd project && npm ci && npm run build"
 
 [context.develop]
   command = "cd project && npm run dev"
