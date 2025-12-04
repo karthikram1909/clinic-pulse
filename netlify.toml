@@ -1,22 +1,12 @@
 [build]
-  # Ensure devDependencies (vite) are installed during CI by disabling npm's production mode
-  command = "NPM_CONFIG_PRODUCTION=false npm ci && cd project && NPM_CONFIG_PRODUCTION=false npm ci && npm run build"
-  functions = "netlify/functions"
-  publish = "project/dist"
+  base = "frontend"           # change if your frontend folder name differs
+  command = "npm run build"
+  publish = "frontend/dist"   # Vite outputs to frontend/dist; if your build outputs elsewhere adjust this
 
-[context.production]
-  # Same as above for production context
-  command = "NPM_CONFIG_PRODUCTION=false npm ci && cd project && NPM_CONFIG_PRODUCTION=false npm ci && npm run build"
+[build.environment]
+  # We'll set VITE_API_BASE in Netlify UI instead of hardcoding it here.
+  # VITE_API_BASE = "https://YOUR_BACKEND_URL"  # optional, but set in Netlify UI is safer
 
-[context.develop]
-  command = "cd project && npm run dev"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[dev]
+  command = "npm run dev"
+  port = 5173
