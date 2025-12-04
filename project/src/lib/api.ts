@@ -3,9 +3,10 @@ import type { Patient } from './types';
 // Use environment variable for API base
 // In production (Netlify), this will be /.netlify/functions/api
 // In development, use Vite env var `VITE_API_BASE` or default to http://localhost:4000/api
-const isProd = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
-const API_BASE = (isProd ? '/.netlify/functions/api' : (import.meta.env.VITE_API_BASE || 'http://localhost:4000/api'))
-  .replace(/\/+$/, ''); // remove trailing slash
+// const isProd = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+// const API_BASE = (isProd ? '/.netlify/functions/api' : (import.meta.env.VITE_API_BASE || 'http://localhost:4000/api'))
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000/api"
+.replace(/\/+$/, ''); // remove trailing slash
 
 function apiUrl(path: string) {
   // ensure exactly one slash between base and path
