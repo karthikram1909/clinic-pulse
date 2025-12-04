@@ -300,3 +300,4 @@ function normalizeStatus(backendStatus: string): 'waiting' | 'in_consultation' |
   };
   return statusMap[backendStatus] || 'waiting';
 }
+  
